@@ -247,7 +247,7 @@ func (d *Differ) compareColumn(source, target *schema.Column) *ColumnChanges {
 	hasChanges := false
 
 	// Type change
-	if strings.ToUpper(source.Type) != strings.ToUpper(target.Type) {
+	if !strings.EqualFold(source.Type, target.Type) {
 		changes.OldType = source.Type
 		changes.NewType = target.Type
 		hasChanges = true
@@ -301,7 +301,7 @@ func sameDefault(a, b *string) bool {
 	if a == nil || b == nil {
 		return false
 	}
-	return strings.ToUpper(*a) == strings.ToUpper(*b)
+	return strings.EqualFold(*a, *b)
 }
 
 func (d *Differ) compareStandaloneIndexes(changes *Changes) {

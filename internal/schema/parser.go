@@ -146,7 +146,7 @@ func (p *Parser) parseColumnDef(def string) *Column {
 	}
 
 	col := &Column{
-		Name:     strings.Trim(parts[0], `"'`+"``"),
+		Name:     strings.Trim(parts[0], `"'` + "`"),
 		Type:     parts[1],
 		Nullable: true,
 	}
@@ -195,7 +195,7 @@ func (p *Parser) parsePrimaryKeyConstraint(def string) *PrimaryKey {
 	if matches := colsRe.FindStringSubmatch(def); len(matches) >= 2 {
 		cols := strings.Split(matches[1], ",")
 		for _, c := range cols {
-			pk.Columns = append(pk.Columns, strings.TrimSpace(strings.Trim(c, `"'`+"``")))
+			pk.Columns = append(pk.Columns, strings.TrimSpace(strings.Trim(c, `"'` + "`")))
 		}
 	}
 
@@ -210,7 +210,7 @@ func (p *Parser) parseForeignKeyConstraint(def string) *ForeignKey {
 	if matches := localRe.FindStringSubmatch(def); len(matches) >= 2 {
 		cols := strings.Split(matches[1], ",")
 		for _, c := range cols {
-			fk.Columns = append(fk.Columns, strings.TrimSpace(strings.Trim(c, `"'`+"``")))
+			fk.Columns = append(fk.Columns, strings.TrimSpace(strings.Trim(c, `"'` + "`")))
 		}
 	}
 
@@ -221,7 +221,7 @@ func (p *Parser) parseForeignKeyConstraint(def string) *ForeignKey {
 		fk.ReferencedTable = matches[2]
 		cols := strings.Split(matches[3], ",")
 		for _, c := range cols {
-			fk.ReferencedCols = append(fk.ReferencedCols, strings.TrimSpace(strings.Trim(c, `"'`+"``")))
+			fk.ReferencedCols = append(fk.ReferencedCols, strings.TrimSpace(strings.Trim(c, `"'` + "`")))
 		}
 	}
 
@@ -247,7 +247,7 @@ func (p *Parser) parseUniqueConstraint(def string) *Constraint {
 	if matches := colsRe.FindStringSubmatch(def); len(matches) >= 2 {
 		cols := strings.Split(matches[1], ",")
 		for _, c := range cols {
-			constraint.Columns = append(constraint.Columns, strings.TrimSpace(strings.Trim(c, `"'`+"``")))
+			constraint.Columns = append(constraint.Columns, strings.TrimSpace(strings.Trim(c, `"'` + "`")))
 		}
 	}
 
@@ -332,7 +332,7 @@ func (p *Parser) parseCreateIndex(stmt string) (*Index, error) {
 			c = strings.TrimSpace(c)
 			// Remove ASC/DESC
 			c = regexp.MustCompile(`(?i)\s+(ASC|DESC)$`).ReplaceAllString(c, "")
-			idx.Columns = append(idx.Columns, strings.Trim(c, `"'`+"``"))
+			idx.Columns = append(idx.Columns, strings.Trim(c, `"'` + "`"))
 		}
 	}
 
