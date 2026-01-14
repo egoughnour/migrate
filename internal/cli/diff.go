@@ -59,7 +59,8 @@ func runDiff(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to load target schema: %w", err)
 	}
 
-	changes := diff.Compare(source, target)
+	differ := diff.NewDiffer(source, target)
+	changes := differ.Compare()
 
 	// Output in requested format
 	switch outputFormat {
@@ -72,7 +73,8 @@ func runDiff(cmd *cobra.Command, args []string) error {
 		if dialect == "" {
 			dialect = detectDialect(sourceURI)
 		}
-		return diff.WriteSQL(os.Stdout, changes, dialect)
+		sqlGen := diff.NewSQLGenerator(dialect)
+		return sqlGen.WriteSQL(os.Stdout, changes)
 	default:
 		return diff.WriteText(os.Stdout, changes)
 	}
@@ -85,5 +87,12 @@ func loadSchema(uri, dialect string) (*schema.Schema, error) {
 		}
 		return schema.ParseFile(uri, dialect)
 	}
-	return db.Introspect(uri)
+
+	introspector, err := db.NewIntrospector(uri)
+	if err != nil {
+		return nil, err
+	}
+	defer introspector.Close()
+
+	return introspector.Introspect()
 }

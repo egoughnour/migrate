@@ -67,7 +67,13 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 			fmt.Fprintf(os.Stderr, "Connecting to %s database...\n", detectedDialect)
 		}
 
-		s, err = db.Introspect(sourceURI)
+		introspector, err := db.NewIntrospector(sourceURI)
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer introspector.Close()
+
+		s, err = introspector.Introspect()
 		if err != nil {
 			return fmt.Errorf("failed to introspect database: %w", err)
 		}
