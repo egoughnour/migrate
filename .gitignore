@@ -1,5 +1,5 @@
-# Binaries
-migrate
+# Binaries (root level only, not cmd/migrate/)
+/migrate
 *.exe
 *.dll
 *.so
